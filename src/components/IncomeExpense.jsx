@@ -4,18 +4,16 @@ import { GlobalContext } from "../context/GlobalState";
 export const IncomeExpense = () => {
   const { transactions } = useContext(GlobalContext);
 
-  const income = transactions
-    .map((transaction) => transaction.amount)
+  const amounts = transactions
+  .map((transaction) => transaction.amount)
+
+  const income = amounts
     .filter((amount) => {return amount > 0})
     .reduce((acc, item) => (acc += item), 0)
     
-    const expense = transactions
-    .map((transaction) => transaction.amount)
+    const expense = amounts
     .filter((amount) => {return amount < 0})
     .reduce((acc, item) => (acc += item), 0)
-
-  console.log(income)
-
 
     return (
         <div className="inc-exp-container">
