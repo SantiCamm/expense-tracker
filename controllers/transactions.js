@@ -20,6 +20,11 @@ exports.getTransactions = async (req, res, next) => {
 // @route POST /expensetracker/transactions
 exports.addTransaction = async (req, res, next) => {
   const { text, amount } = req.body;
+
+  if (amount === 0) {
+    return res.status(500).json({ message: "Please enter an amount different than 0" });
+  }
+
   const newTransaction = new Transaction({
     text,
     amount,

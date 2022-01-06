@@ -4,15 +4,15 @@ import { GlobalContext } from "../context/GlobalState";
 export const NewTransactionForm = () => {
   const [text, setText] = useState("");
   const [amount, setAmount] = useState(0);
-  const { addTransaction } = useContext(GlobalContext);
+  const { addTransaction, error } = useContext(GlobalContext);
 
   const submitTransaction = (e) => {
     e.preventDefault();
-    addTransaction({
-      id: Math.floor(Math.random() * 1000000),
-      text,
-      amount: +amount,
-    });
+      addTransaction({
+        id: Math.floor(Math.random() * 1000000),
+        text,
+        amount: +amount,
+      });
   };
 
   return (
@@ -22,6 +22,7 @@ export const NewTransactionForm = () => {
         <div className="form-control">
           <label htmlFor="text">Text</label>
           <input
+            required
             type="text"
             placeholder="Enter text..."
             value={text}
@@ -36,6 +37,7 @@ export const NewTransactionForm = () => {
             (negative - expense, positive - income)
           </label>
           <input
+            required
             type="number"
             placeholder="Enter amount..."
             value={amount}
@@ -46,6 +48,8 @@ export const NewTransactionForm = () => {
         </div>
         <button className="btn">Add transaction</button>
       </form>
+
+      {error && <h4 className="error">{error}</h4>}
     </>
   );
 };

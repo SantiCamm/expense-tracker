@@ -2,6 +2,7 @@ import React, { createContext, useReducer } from "react";
 import AppReducer from "./AppReducer";
 import axios from "axios";
 
+// Default state
 const initialState = {
   transactions: [],
   error: null,
@@ -12,13 +13,21 @@ const initialState = {
 export const GlobalContext = createContext(initialState);
 
 // Create provider for other components to access state, actions, etc
+// Children will be the components wrapped inside the GlobalProvider
 export const GlobalProvider = ({ children }) => {
+
   // Reducer takes our own reducer and an initial piece of state
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
+  // ACTIONS
+  // Async since we are waiting for the api response
   async function getTransactions() {
     try {
+      
+      // Make the api call with axios
       const res = await axios.get("/expensetracker/transactions/");
+
+      // Dispatch an action to the reducer with the fetched data
       dispatch({
         type: "GET_TRANSACTIONS",
         payload: res.data.data,
@@ -27,6 +36,36 @@ export const GlobalProvider = ({ children }) => {
       dispatch({
         type: "TRANSACTION_ERROR",
         payload: error.response.data.error,
+      });
+    }
+  }
+
+  async function addTransaction(transaction) {
+    try {
+
+      // Config to make a POST request with axios (headers)
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      // Axios request
+      const res = await axios.post(
+        "expensetracker/transactions/",
+        transaction,
+        config
+      );
+
+      // Dispatch an action with the response data. In this case, the recently added transaction
+      dispatch({
+        type: "ADD_TRANSACTION",
+        payload: res.data.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: "TRANSACTION_ERROR",
+        payload: error.response.data.message,
       });
     }
   }
@@ -46,33 +85,7 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
-  async function addTransaction(transaction) {
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      const res = await axios.post(
-        "expensetracker/transactions/",
-        transaction,
-        config
-      );
-
-      dispatch({
-        type: "ADD_TRANSACTION",
-        payload: res.data.data,
-      });
-    } catch (error) {
-      dispatch({
-        type: "TRANSACTION_ERROR",
-        payload: error.response.data.error,
-      });
-    }
-  }
-
   // Return the Provider so that we can access it
-  // {children} will be our components wrapped inside the Provider. In this case, everything in App.js
   return (
     <GlobalContext.Provider
       value={{
