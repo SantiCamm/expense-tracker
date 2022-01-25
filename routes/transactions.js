@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../middleware/auth.js");
+
 const {
   getTransactions,
   addTransaction,
@@ -8,11 +10,11 @@ const {
 
 router
     .route("/")
-    .get(getTransactions)
-    .post(addTransaction)
+    .get(auth, getTransactions)
+    .post(auth, addTransaction)
 
 router
     .route("/:id")
-    .delete(deleteTransaction)
+    .delete(auth, deleteTransaction)
 
 module.exports = router;

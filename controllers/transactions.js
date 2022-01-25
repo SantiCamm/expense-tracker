@@ -6,8 +6,10 @@ const Transaction = require("../models/Transaction");
 // @desc Get transactions
 // @route GET /expensetracker/transactions
 exports.getTransactions = async (req, res, next) => {
+  const { userId } = req;
+
   try {
-    const transactions = await Transaction.find();
+    const transactions = await Transaction.find({ creator: userId });
     return res.status(200).json({
       data: transactions,
     });
@@ -20,15 +22,20 @@ exports.getTransactions = async (req, res, next) => {
 // @route POST /expensetracker/transactions
 exports.addTransaction = async (req, res, next) => {
   const { text, amount } = req.body;
+  const { userId } = req;
 
   if (amount === 0) {
-    return res.status(500).json({ message: "Please enter an amount different than 0" });
+    return res
+      .status(500)
+      .json({ message: "Please enter an amount different than 0" });
   }
 
   const newTransaction = new Transaction({
+    creator: userId,
     text,
     amount,
   });
+
   try {
     await newTransaction.save();
     res.status(200).json({
@@ -43,16 +50,14 @@ exports.addTransaction = async (req, res, next) => {
 // @route DELETE /expensetracker/transactions/>id
 exports.deleteTransaction = async (req, res, next) => {
   const id = req.params.id;
-  console.log(id)
   try {
-      
     /*if (!Mongoose.Types.ObjectID.isValid(id)) {
       return res.status(404).json({ message: "No transaction with that id" });
     }*/
 
     await Transaction.findByIdAndRemove(id);
 
-    return res.status(200).json({data: "Transaction deleted succesfully"})
+    return res.status(200).json({ data: "Transaction deleted succesfully" });
   } catch (error) {
     return res.status(500).json({ message: error });
   }

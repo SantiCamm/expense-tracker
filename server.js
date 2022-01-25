@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const colors = require("colors");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
@@ -11,11 +12,14 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 const transactions = require("./routes/transactions");
+const users = require("./routes/users")
 
 const app = express();
 
 // In order to use the body parser
 app.use(express.json());
+
+app.use(cors());
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -23,6 +27,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Each request made to this url will be routed to the transactions file
 app.use("/expensetracker/transactions", transactions);
+app.use("/expensetracker/users", users)
 
 if (process.env.NODE_ENV === "production") {
 

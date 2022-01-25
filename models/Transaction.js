@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const TransactionSchema = new mongoose.Schema({
+    creator: {
+        type: String,
+        required: [true, "Please add a creator"],
+    },
     text: {
         type: String,
         required: [true, "Please insert some text"],
