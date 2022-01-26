@@ -10,9 +10,8 @@ const Auth = () => {
   const { googleLogin } = useContext(GlobalContext);
 
   const googleSuccess = (res) => {
-    const result = res?.profileObj;
     const token = res?.tokenId;
-    googleLogin({ result, token }, navigate);
+    googleLogin(token, navigate);
   };
 
   const googleFailure = (error) => {
@@ -27,7 +26,7 @@ const Auth = () => {
         <h1>Expense Tracker</h1>
       </LogoContainer>
       <GoogleLogin
-        clientId="208706502819-6uhrqrva53mmm6nfjgmbjbijcf5dgtdg.apps.googleusercontent.com"
+        clientId={process.env.REACT_APP_CLIENT_ID}
         buttonText="Login with your Google account"
         onSuccess={googleSuccess}
         onFailure={googleFailure}

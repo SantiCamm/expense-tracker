@@ -1,16 +1,23 @@
-const jwt = require("jsonwebtoken");
 const User = require("../models/User.js");
+const { OAuth2Client } = require("google-auth-library");
 
 const auth = async (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
   if (!token) {
     return next(
       res.status(404).json({ message: "Not authorized to access this route" })
-    );
-  }
-  try {
-    let decodedData = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findOne({ id: decodedData.id });
+      );
+    }
+    try {
+      const client = new OAuth2Client(process.env.CLIENT_ID);
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.CLIENT_ID,
+      });
+      
+    const decodedToken = ticket.getPayload();
+
+    const user = await User.findOne({ id: decodedToken.sub });
     
     if (!user) {
       return next(
@@ -18,7 +25,7 @@ const auth = async (req, res, next) => {
       );
     }
 
-    req.userId = decodedData?.id;
+    req.userId = decodedToken?.sub;
     next();
   } catch (error) {
     return next(

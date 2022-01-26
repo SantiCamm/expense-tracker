@@ -16,21 +16,23 @@ exports.googleLogin = async (req, res, next) => {
       audience: process.env.CLIENT_ID,
     });
 
-    const { name, email } = ticket.getPayload();
+    const decodedToken = ticket.getPayload();
+    const { sub, name, email, picture} = decodedToken;
 
     let googleUser = await User.findOne({ email });
-    // If the user doesn't exist, create and return it
+
+    // If the user doesn't exist, we create it
     if (!googleUser) {
         googleUser = await User.create({
-            id: googleToken,
+            id: sub,
             name,
             email,
         });
     }
-    // If Google user exists, we return the user
-    const token = googleUser.getSignedToken();
 
-    return res.status(200).json({ result: googleUser, token });
+    //const token = googleUser.getSignedToken();
+    
+    return res.status(200).json({ result: {sub, picture}, googleToken });
   } catch (error) {
     return res.status(500).json({message: "Auth failed"})
   }

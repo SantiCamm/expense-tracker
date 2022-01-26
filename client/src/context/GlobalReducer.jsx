@@ -5,7 +5,7 @@ const reducer = (state, action) => {
     case "LOGIN":
       localStorage.setItem("profile", JSON.stringify({ ...action.payload }));
       return { ...state, auth: { success: true, authData: action.payload } };
-    
+
     // Clear session
     case "LOGOUT":
       localStorage.clear();

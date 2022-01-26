@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { GlobalContext } from "../../context/GlobalState";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../images/logo.png";
+import { GoogleLogout } from "react-google-login";
+
 import {
   Header,
   LogoContainer,
@@ -33,10 +35,22 @@ const Appbar = () => {
       <AppName>Expense Tracker</AppName>
       <UserContainer>
         <Avatar
-          alt={user?.googleUserData?.name}
-          src={user?.googleUserData?.imageUrl}
+          alt={user?.result?.sub}
+          src={user?.result?.picture}
         />
-        <LogoutButton onClick={handleLogout}>LOG OUT</LogoutButton>
+        <GoogleLogout
+          clientId={process.env.REACT_APP_CLIENT_ID}
+          buttonText="Logout"
+          onLogoutSuccess={handleLogout}
+          render={(renderProps) => (
+            <LogoutButton
+              onClick={renderProps.onClick}
+              disabled={renderProps.disabled}
+            >
+              LOG OUT
+            </LogoutButton>
+          )}
+        ></GoogleLogout>
       </UserContainer>
     </Header>
   );

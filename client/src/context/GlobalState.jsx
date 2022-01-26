@@ -26,18 +26,14 @@ export const GlobalProvider = ({ children }) => {
       type: "LOGOUT",
     });
     navigate("/login");
-  };
+  }
 
-
-  async function googleLogin(res, navigate) {
-    const { result: googleUserData, token } = res;
+  async function googleLogin(token, navigate) {
     try {
-      const serverResponse = await api.googleLogin({ token });
-      const data = serverResponse.data;
-      
+      const googleUserData = await api.googleLogin({ token });
       dispatch({
         type: "LOGIN",
-        payload: {googleUserData, data},
+        payload: googleUserData.data,
       });
       navigate("/");
     } catch (error) {}

@@ -7,9 +7,9 @@ const usersAPI = axios.create();
 // Passing bearer token in headers for the transactions API
 transactionsAPI.interceptors.request.use((req) => {
   const data = JSON.parse(localStorage.getItem("profile"));
-    if (data.data.token) {
+    if (data.googleToken) {
       req.headers.authorization = `Bearer ${
-        data.data.token
+        data.googleToken
       }`;
     }
     return req;
@@ -19,4 +19,4 @@ export const fetchTransactions = () => transactionsAPI.get("/expensetracker/tran
 export const addTransaction = (transaction, config) => transactionsAPI.post("/expensetracker/transactions/", transaction, config);
 export const deleteTransaction = (transactionID) => transactionsAPI.delete(`/expensetracker/transactions/${transactionID}`);
 
-export const googleLogin = (token) => usersAPI.post("/expensetracker/users/auth", token);
+export const googleLogin = (authData) => usersAPI.post("/expensetracker/users/auth", authData);
